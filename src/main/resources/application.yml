@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: demo
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  datasource:
+    hikari:
+      max-lifetime: 177000
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      # ddl-auto: validate
+      ddl-auto: create
