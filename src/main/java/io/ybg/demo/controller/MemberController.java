@@ -56,7 +56,7 @@ public class MemberController {
 
     @Operation(summary = "email check", description = "email check")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Member Email 존재 여부 반환", content = @Content(schema = @Schema(implementation = boolean.class))),
+            @ApiResponse(responseCode = "200", description = "Member Email 사용 가능 여부 반환", content = @Content(schema = @Schema(implementation = boolean.class))),
     })
     @GetMapping("/email/check/{email}")
     public ResponseEntity<Member> checkEmail(@Parameter(description = "Member Email") @PathVariable String email) {
