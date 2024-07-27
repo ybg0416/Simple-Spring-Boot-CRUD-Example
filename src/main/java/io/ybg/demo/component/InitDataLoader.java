@@ -17,7 +17,7 @@ public class InitDataLoader implements CommandLineRunner {
 
     @Override
     public void run(final String... args) {
-        memberRepo.save(Member.builder().email("admin@mail.com").name("운영자").build());
+        memberRepo.save(Member.builder().email("admin@mail.com").name("운영자").phone("010-1234-5678").build());
         log.info("Admin Member created");
     }
 }
