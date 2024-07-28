@@ -72,7 +72,7 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "가입 실패(이메일 충돌)", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<Member> createMember(@Parameter(description = "Member Info") @RequestBody MemberDTO.Create param) {
+    public ResponseEntity<MemberDTO.Info> createMember(@Parameter(description = "Member Info") @RequestBody MemberDTO.Create param) {
         Member member = MemberMapper.INSTANCE.CreateToMember(param);
 
         try {
@@ -97,7 +97,7 @@ public class MemberController {
         Member member = MemberMapper.INSTANCE.UpdateToMember(update);
 
         try {
-            memberService.updateMember(id,member);
+            member = memberService.updateMember(id,member);
         } catch (RuntimeException e) {
             log.warn("Error updating Member: {}, {}", e.getMessage(), member);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

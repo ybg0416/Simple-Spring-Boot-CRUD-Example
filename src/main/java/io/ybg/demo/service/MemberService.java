@@ -44,7 +44,7 @@ public class MemberService {
         return member;
     }
 
-    public void updateMember(Integer id, Member member) {
+    public Member updateMember(Integer id, Member member) {
         Optional<Member> existingMember = memberRepo.findById(id);
 
         // 존재 여부 검증
