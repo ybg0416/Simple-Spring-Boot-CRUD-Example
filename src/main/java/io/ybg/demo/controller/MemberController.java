@@ -34,8 +34,8 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "모든 멤버 반환"),
     })
     @GetMapping("/")
-    public ResponseEntity<List<Member>> getAllMembers() {
-        return ResponseEntity.ok().body(memberService.getAllMembers());
+    public ResponseEntity<List<MemberDTO.Info>> getAllMembers() {
+        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemeberToInfo(memberService.getAllMembers()));
     }
 
     @Operation(summary = "get Member By ID", description = "get Member By ID")
@@ -44,14 +44,14 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 멤버", content = @Content),
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
+    public ResponseEntity<MemberDTO.Info> getMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
         Member member = memberService.getMemberById(id);
 
         if (member == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok().body(memberService.getMemberById(id));
+        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemeberToInfo(member));
     }
 
     @Operation(summary = "email check", description = "email check")
@@ -69,7 +69,9 @@ public class MemberController {
             @ApiResponse(responseCode = "409", description = "가입 실패", content = @Content)
     })
     @PostMapping("/")
-    public ResponseEntity<Member> saveMember(@Parameter(description = "Member Info") @RequestBody Member member) {
+    public ResponseEntity<MemberDTO.Info> createMember(@Parameter(description = "Member Info") @RequestBody MemberDTO.Create param) {
+        Member member = MemberMapper.INSTANCE.CreateToMember(param);
+
         try {
             memberService.saveMember(member);
         } catch (DataIntegrityViolationException e) {
@@ -87,7 +89,7 @@ public class MemberController {
     @PutMapping("/")
     public ResponseEntity<Member> updateMember(@Parameter(description = "Member Info") @RequestBody @Valid Member member) {
         try {
-            memberService.updateMember(member);
+            member = memberService.updateMember(id,member);
         } catch (RuntimeException e) {
             log.warn("Error updating Member: {}, {}", e.getMessage(), member);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -101,13 +103,13 @@ public class MemberController {
             @ApiResponse(responseCode = "500", description = "삭제 실패", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
+    public ResponseEntity<Boolean> deleteMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
         try {
             memberService.deleteMemberById(id);
         } catch (Exception e) {
             log.warn("Error deleting Member: {}, {}", e.getMessage(), id);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(true);
     }
 }

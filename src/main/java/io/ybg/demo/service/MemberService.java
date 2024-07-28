@@ -42,8 +42,8 @@ public class MemberService {
         }
     }
 
-    public void updateMember(Member member) {
-        Optional<Member> existingMember = memberRepo.findById(member.getId());
+    public Member updateMember(Integer id, Member member) {
+        Optional<Member> existingMember = memberRepo.findById(id);
 
         // 존재 여부 검증
         if (existingMember.isEmpty()) {
@@ -59,6 +59,7 @@ public class MemberService {
         memberRepo.save(member);
 
         log.info("Member with id: {} updated successfully", member.getId());
+        return member;
     }
 
     public boolean isExistingEmail(Member member) {
