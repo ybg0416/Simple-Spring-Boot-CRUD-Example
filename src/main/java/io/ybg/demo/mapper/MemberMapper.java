@@ -1,7 +1,7 @@
 package io.ybg.demo.mapper;
 
 import io.ybg.demo.dto.MemberDTO;
-import io.ybg.demo.entity.Member;
+import io.ybg.demo.entity.MemberEntity;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -15,12 +15,14 @@ public interface MemberMapper {
     MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Member Update(@MappingTarget Member member, Member update);
+    MemberEntity Update(@MappingTarget MemberEntity memberEntity, MemberEntity update);
 
-    MemberDTO.Info MemeberToInfo(Member member);
-    List<MemberDTO.Info> MemeberToInfo(List<Member> member);
+    MemberDTO.InfoMemberDTO MemberToInfo(MemberEntity memberEntity);
 
-    Member UpdateToMember(MemberDTO.Update update);
-    Member CreateToMember(MemberDTO.Create member);
+    List<MemberDTO.InfoMemberDTO> MemberToInfo(List<MemberEntity> memberEntity);
+
+    MemberEntity UpdateToMember(MemberDTO.UpdateMemberDTO updateDTO);
+
+    MemberEntity CreateToMember(MemberDTO.CreateMemberDTO member);
 
 }

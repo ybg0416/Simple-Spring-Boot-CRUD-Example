@@ -1,6 +1,6 @@
 package io.ybg.demo.service;
 
-import io.ybg.demo.entity.Member;
+import io.ybg.demo.entity.MemberEntity;
 import io.ybg.demo.mapper.MemberMapper;
 import io.ybg.demo.repository.MemberRepo;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public class MemberService {
 
     private final MemberRepo memberRepo;
 
-    public List<Member> getAllMembers() {
+    public List<MemberEntity> getAllMembers() {
         return memberRepo.findAll();
     }
 
-    public Member getMemberById(Integer id) {
-        Optional<Member> optionalMember = memberRepo.findById(id);
+    public MemberEntity getMemberById(Integer id) {
+        Optional<MemberEntity> optionalMember = memberRepo.findById(id);
         if (optionalMember.isPresent()) {
             return optionalMember.get();
         }
@@ -31,38 +31,39 @@ public class MemberService {
         return null;
     }
 
-    public Member saveMember(Member member) {
+    public MemberEntity saveMember(MemberEntity memberEntity) {
         try {
-            if (isExistingEmail(member.getEmail())) {
+            if (isExistingEmail(memberEntity.getEmail())) {
                 throw new RuntimeException("Email already exists");
             }
-            member = memberRepo.save(member);
-            log.info("Member saved successfully : {}", member);
+            memberEntity = memberRepo.save(memberEntity);
+            log.info("Member saved successfully : {}", memberEntity);
         } catch (DataIntegrityViolationException e) {
             throw e;
         }
-        return member;
+        return memberEntity;
     }
 
-    public Member updateMember(Integer id, Member member) {
-        Optional<Member> existingMember = memberRepo.findById(id);
+    public MemberEntity updateMember(Integer id, MemberEntity memberEntity) {
+        Optional<MemberEntity> existingMember = memberRepo.findById(id);
 
         // 존재 여부 검증
         if (existingMember.isEmpty()) {
             throw new RuntimeException("Update Member with id: " + id + " doesn't exist");
+            // throw new BadRequestException("Update Member with id: " + id + " doesn't exist");
         }
         // 이메일 중복 검증
-        if (!member.getEmail().equals(existingMember.get().getEmail())) {
-            if (isExistingEmail(member.getEmail())) {
+        if (!memberEntity.getEmail().equals(existingMember.get().getEmail())) {
+            if (isExistingEmail(memberEntity.getEmail())) {
                 throw new RuntimeException("Update Email already exists");
             }
         }
         // 병합
-        member = MemberMapper.INSTANCE.Update(existingMember.get(), member);
-        memberRepo.save(member);
+        memberEntity = MemberMapper.INSTANCE.Update(existingMember.get(), memberEntity);
+        memberRepo.save(memberEntity);
 
-        log.info("Member with id: {} updated successfully", member.getId());
-        return member;
+        log.info("Member with id: {} updated successfully", memberEntity.getId());
+        return memberEntity;
     }
 
     public boolean isExistingEmail(String email) {
@@ -70,7 +71,7 @@ public class MemberService {
     }
 
     public void deleteMemberById(Integer id) {
-        Optional<Member> existingMember = memberRepo.findById(id);
+        Optional<MemberEntity> existingMember = memberRepo.findById(id);
 
         // 존재 여부 검증
         if (existingMember.isEmpty()) {

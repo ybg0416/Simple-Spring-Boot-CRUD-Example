@@ -1,7 +1,6 @@
 package io.ybg.demo.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.ybg.demo.dto.MemberDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,8 +13,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.validator.constraints.Length;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,7 +23,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(indexes = @Index(name = "member_uuid", columnList = "uuid"))
-public class Member {
+public class MemberEntity {
 
     @Id
     @GeneratedValue
@@ -59,5 +56,5 @@ public class Member {
     private LocalDateTime reg_dt;
     @UpdateTimestamp
     private LocalDateTime mod_dt;
-    
+
 }

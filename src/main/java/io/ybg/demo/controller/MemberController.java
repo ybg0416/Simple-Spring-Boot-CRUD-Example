@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.ybg.demo.dto.MemberDTO;
-import io.ybg.demo.entity.Member;
+import io.ybg.demo.entity.MemberEntity;
 import io.ybg.demo.mapper.MemberMapper;
 import io.ybg.demo.service.MemberService;
 import jakarta.validation.Valid;
@@ -35,9 +35,9 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모든 멤버 반환"),
     })
-    @GetMapping("/")
-    public ResponseEntity<List<MemberDTO.Info>> getAllMembers() {
-        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemeberToInfo(memberService.getAllMembers()));
+    @GetMapping()
+    public ResponseEntity<List<MemberDTO.InfoMemberDTO>> getAllMembers() {
+        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemberToInfo(memberService.getAllMembers()));
     }
 
     @Operation(summary = "get Member By ID", description = "get Member By ID")
@@ -46,14 +46,14 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 멤버", content = @Content),
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MemberDTO.Info> getMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
-        Member member = memberService.getMemberById(id);
+    public ResponseEntity<MemberDTO.InfoMemberDTO> getMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
+        MemberEntity memberEntity = memberService.getMemberById(id);
 
-        if (member == null) {
+        if (memberEntity == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemeberToInfo(member));
+        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemberToInfo(memberEntity));
     }
 
     @Operation(summary = "email check", description = "email check")
@@ -71,20 +71,20 @@ public class MemberController {
             @ApiResponse(responseCode = "500", description = "가입 실패", content = @Content),
             @ApiResponse(responseCode = "400", description = "가입 실패(이메일 충돌)", content = @Content)
     })
-    @PostMapping("/")
-    public ResponseEntity<MemberDTO.Info> createMember(@Parameter(description = "Member Info") @RequestBody MemberDTO.Create param) {
-        Member member = MemberMapper.INSTANCE.CreateToMember(param);
+    @PostMapping()
+    public ResponseEntity<MemberDTO.InfoMemberDTO> createMember(@Parameter(description = "Member Info") @RequestBody MemberDTO.CreateMemberDTO param) {
+        MemberEntity memberEntity = MemberMapper.INSTANCE.CreateToMember(param);
 
         try {
-            member = memberService.saveMember(member);
+            memberEntity = memberService.saveMember(memberEntity);
         } catch (DataIntegrityViolationException e) {
-            log.warn("Error saving Member: {} , {}", e.getMessage(), member);
+            log.warn("Error saving Member: {} , {}", e.getMessage(), memberEntity);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (RuntimeException e) {
-            log.warn("email already exists: {}, {}", e.getMessage(), member);
+            log.warn("email already exists: {}, {}", e.getMessage(), memberEntity);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.created(URI.create("/Members/" + member.getId())).build();
+        return ResponseEntity.created(URI.create("/Members/" + memberEntity.getId())).build();
     }
 
     @Operation(summary = "update Member", description = "update Member")
@@ -93,16 +93,16 @@ public class MemberController {
             @ApiResponse(responseCode = "409", description = "수정 실패", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<MemberDTO.Info> updateMember(@PathVariable Integer id, @Parameter(description = "Member Info") @RequestBody @Valid MemberDTO.Update update) {
-        Member member = MemberMapper.INSTANCE.UpdateToMember(update);
+    public ResponseEntity<MemberDTO.InfoMemberDTO> updateMember(@PathVariable Integer id, @Parameter(description = "Member Info") @RequestBody @Valid MemberDTO.UpdateMemberDTO updateDTO) {
+        MemberEntity memberEntity = MemberMapper.INSTANCE.UpdateToMember(updateDTO);
 
         try {
-            member = memberService.updateMember(id,member);
+            memberEntity = memberService.updateMember(id, memberEntity);
         } catch (RuntimeException e) {
-            log.warn("Error updating Member: {}, {}", e.getMessage(), member);
+            log.warn("Error updating Member: {}, {}", e.getMessage(), memberEntity);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemeberToInfo(member));
+        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemberToInfo(memberEntity));
     }
 
     @Operation(summary = "delete Member", description = "delete Member")

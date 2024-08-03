@@ -15,3 +15,12 @@ spring:
     hibernate:
       # ddl-auto: validate
       ddl-auto: create
+springdoc:
+  api-docs:
+    path: /openapi.json
+  swagger-ui:
+    path: /swagger
+management:
+  endpoint:
+    health:
+      show-details: always

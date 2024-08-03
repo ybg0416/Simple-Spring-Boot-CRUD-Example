@@ -9,4 +9,5 @@ import org.springframework.context.annotation.Configuration;
                 description = "Member CRUD 기능",
                 version = "v1"))
 @Configuration
-public class SwaggerConfig {}
+public class SwaggerConfig {
+}
