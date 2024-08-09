@@ -19,7 +19,7 @@ public class MemberDTO {
         @NotEmpty(message = "Email cannot be null")
         @Email
         @Length(min = 2, max = 64, message = "Email not be less than 2 characters")
-        @Schema(description = "사용자 이메일", nullable = false, example = "test@naver.com")
+        @Schema(description = "사용자 이메일", example = "test@naver.com")
         private String email;
 
         @Length(min = 2, max = 32, message = "Name not be less than 2 characters")
@@ -38,7 +38,7 @@ public class MemberDTO {
         @NotEmpty(message = "Email cannot be null")
         @Email
         @Length(min = 2, max = 64, message = "Email not be less than 2 characters")
-        @Schema(description = "사용자 이메일", nullable = false, example = "test@naver.com")
+        @Schema(description = "사용자 이메일", example = "test@naver.com")
         private String email;
 
         @Length(min = 2, max = 32, message = "Name not be less than 2 characters")
@@ -55,7 +55,7 @@ public class MemberDTO {
     @Builder
     public static class InfoMemberDTO {
         @Schema(description = "사용자 PK", example = "1")
-        private Integer id;
+        private long id;
 
         @Schema(description = "사용자 UUID", example = "1")
         private UUID uuid;
@@ -63,7 +63,7 @@ public class MemberDTO {
         @NotEmpty(message = "Email cannot be null")
         @Email
         @Length(min = 2, max = 64, message = "Email not be less than 2 characters")
-        @Schema(description = "사용자 이메일", nullable = false, example = "test@naver.com")
+        @Schema(description = "사용자 이메일", example = "test@naver.com")
         private String email;
 
         @Length(min = 2, max = 32, message = "Name not be less than 2 characters")

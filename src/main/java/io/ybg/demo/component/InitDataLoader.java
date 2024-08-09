@@ -2,18 +2,16 @@ package io.ybg.demo.component;
 
 import io.ybg.demo.entity.MemberEntity;
 import io.ybg.demo.repository.MemberRepo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class InitDataLoader implements CommandLineRunner {
     private final MemberRepo memberRepo;
-
-    public InitDataLoader(final MemberRepo memberRepo) {
-        this.memberRepo = memberRepo;
-    }
 
     @Override
     public void run(final String... args) {

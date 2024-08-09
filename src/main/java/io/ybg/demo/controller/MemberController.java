@@ -37,7 +37,13 @@ public class MemberController {
     })
     @GetMapping()
     public ResponseEntity<List<MemberDTO.InfoMemberDTO>> getAllMembers() {
-        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemberToInfo(memberService.getAllMembers()));
+        List<MemberEntity> members = memberService.getAllMembers();
+
+        if (members.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemberToInfo(members));
     }
 
     @Operation(summary = "get Member By ID", description = "get Member By ID")
@@ -46,14 +52,13 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 멤버", content = @Content),
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MemberDTO.InfoMemberDTO> getMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
-        MemberEntity memberEntity = memberService.getMemberById(id);
-
-        if (memberEntity == null) {
+    public ResponseEntity<MemberDTO.InfoMemberDTO> getMemberById(@Parameter(description = "Member ID") @PathVariable long id) {
+        try {
+            MemberEntity memberEntity = memberService.getMemberById(id);
+            return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemberToInfo(memberEntity));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-
-        return ResponseEntity.ok().body(MemberMapper.INSTANCE.MemberToInfo(memberEntity));
     }
 
     @Operation(summary = "email check", description = "email check")
@@ -77,14 +82,14 @@ public class MemberController {
 
         try {
             memberEntity = memberService.saveMember(memberEntity);
+
         } catch (DataIntegrityViolationException e) {
             log.warn("Error saving Member: {} , {}", e.getMessage(), memberEntity);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (RuntimeException e) {
-            log.warn("email already exists: {}, {}", e.getMessage(), memberEntity);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.created(URI.create("/Members/" + memberEntity.getId())).build();
+        return ResponseEntity.created(URI.create("/member/v1/" + memberEntity.getId())).build();
     }
 
     @Operation(summary = "update Member", description = "update Member")
@@ -93,11 +98,13 @@ public class MemberController {
             @ApiResponse(responseCode = "409", description = "수정 실패", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<MemberDTO.InfoMemberDTO> updateMember(@PathVariable Integer id, @Parameter(description = "Member Info") @RequestBody @Valid MemberDTO.UpdateMemberDTO updateDTO) {
+    public ResponseEntity<MemberDTO.InfoMemberDTO> updateMember(@PathVariable long id, @Parameter(description = "Member Info") @RequestBody @Valid MemberDTO.UpdateMemberDTO updateDTO) {
         MemberEntity memberEntity = MemberMapper.INSTANCE.UpdateToMember(updateDTO);
 
         try {
             memberEntity = memberService.updateMember(id, memberEntity);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (RuntimeException e) {
             log.warn("Error updating Member: {}, {}", e.getMessage(), memberEntity);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -111,12 +118,14 @@ public class MemberController {
             @ApiResponse(responseCode = "500", description = "삭제 실패", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteMemberById(@Parameter(description = "Member ID") @PathVariable Integer id) {
+    public ResponseEntity<Boolean> deleteMemberById(@Parameter(description = "Member ID") @PathVariable long id) {
         try {
             memberService.deleteMemberById(id);
-        } catch (Exception e) {
-            log.warn("Error deleting Member: {}, {}", e.getMessage(), id);
+        } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException e) {
+            log.warn("Error deleting Member: {}, {}", e.getMessage(), id);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         return ResponseEntity.ok().body(true);
     }
