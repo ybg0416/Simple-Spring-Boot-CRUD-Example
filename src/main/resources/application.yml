@@ -7,14 +7,34 @@ spring:
     livereload:
       enabled: true
   datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/postgres # 단일 값이 아닌 경우 hikari 사용 시 url -> jdbc-url
+    username: postgres
+    password: postgres
     hikari:
       max-lifetime: 177000
-  jpa:
-    show-sql: true
-    generate-ddl: true
-    hibernate:
-      # ddl-auto: validate
-      ddl-auto: create
+  test-datasource:
+    jdbc-url: jdbc:sqlite:src/main/resources/test.db
+    driver-class-name: org.sqlite.JDBC
+    username: admin
+    password: admin
+    hikari:
+      max-lifetime: 177000
+# 정상 동작하지 않아 TestDataSourceConfig에 직접 바인딩
+mybatis:
+  mapper-location: mapper/*.xml
+  mapper-package: io.ybg.demo.mybatis.mapper
+
+#  jpa: #  직접 생성 시 해당 값을 읽어도 Dialect 옵션이 안먹음 MainDataSourceConfig.java jpaProperties 참고
+#    show-sql: true
+#    generate-ddl: true
+#    hibernate:
+#      # ddl-auto: validate
+#      ddl-auto: create
+#      dialect: org.hibernate.dialect.PostgreSQLDialect
+hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+hibernate.hbm2ddl.auto: update
+hibernate.show_sql: true
+
 springdoc:
   api-docs:
     path: /openapi.json

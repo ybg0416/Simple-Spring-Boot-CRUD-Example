@@ -3,6 +3,7 @@ package io.ybg.demo.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ybg.demo.dto.MemberDTO;
 import io.ybg.demo.entity.MemberEntity;
+import io.ybg.demo.service.MainTableService;
 import io.ybg.demo.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,9 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
+
+    @MockBean
+    private MainTableService mainTableService;
 
     @DisplayName("초기화 상태")
     @Test

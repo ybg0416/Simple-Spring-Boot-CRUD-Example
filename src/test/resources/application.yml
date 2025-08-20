@@ -14,3 +14,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect  # 엔진(방언,문법) 종류
+  test-datasource:
+    jdbc-url: jdbc:sqlite:src/main/resources/test.db
+    driver-class-name: org.sqlite.JDBC
+    username: admin
+    password: admin
+    hikari:
+      max-lifetime: 177000
+# 정상 동작하지 않아 TestDataSourceConfig에 직접 바인딩
+mybatis:
+  mapper-location: mapper/*.xml
+  mapper-package: io.ybg.demo.mybatis.mapper
