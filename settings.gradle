@@ -1,1 +1,8 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'Simple-Spring-Boot-CRUD-Example'

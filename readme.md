@@ -2,7 +2,7 @@
 
 ## 📌 Features
 
-- 240725 created, JDK 21, Spring Boot 3.3.2
+- 240725 created, JDK 24, Spring Boot 4.0.6
     - PostgreSQL
     - Create an initial user
     - endpoints CRUD
